@@ -19,6 +19,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const serviceCollection = client.db("serviceReview").collection("services");
+    const reviewCollection = client.db("serviceReview").collection("reviews");
 
     // home page api
     app.get("/", async (req, res) => {
@@ -45,8 +46,6 @@ async function run() {
       const service = await serviceCollection.findOne(query);
       res.send(service);
     });
-
-
   } finally {
   }
 }
