@@ -10,14 +10,39 @@ app.use(cors());
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ilq1t0j.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
 
-app.get("/", (req, res) => {
+async function run() {
+  try {
+    const serviceCollection = client.db("serviceReview").collection("services");
+
+    // home page api
+    app.get("/", async (req, res) => {
+      const query = {};
+      const cursor = serviceCollection.find(query);
+      const services = await cursor.limit(3).toArray();
+
+      res.send(services);
+    });
+
+    // service page api
+    app.get("/services", async (req, res) => {
+      const query = {};
+      const cursor = serviceCollection.find(query);
+      const services = await cursor.toArray();
+
+      res.send(services);
+    });
+  } finally {
+  }
+}
+run().catch((err) => console.log(err));
+
+app.get("/run", (req, res) => {
   res.send("individual service server is running");
 });
 
